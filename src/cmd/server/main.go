@@ -10,9 +10,9 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	api "my-project/generated/api"
-	"my-project/internal/di"
-	"my-project/internal/pkg/app"
+	api "platform-go/generated/api"
+	"platform-go/internal/di"
+	"platform-go/internal/pkg/app"
 )
 
 func main() {

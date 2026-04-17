@@ -8,10 +8,10 @@ package di
 
 import (
 	"gorm.io/gorm"
-	"my-project/internal/infrastructure/queryservice"
-	"my-project/internal/infrastructure/repository"
-	"my-project/internal/interfaces/controller"
-	"my-project/internal/usecases"
+	"platform-go/internal/infrastructure/queryservice"
+	"platform-go/internal/infrastructure/repository"
+	"platform-go/internal/interfaces/controller"
+	"platform-go/internal/usecases"
 	"testing"
 )
 

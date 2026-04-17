@@ -5,10 +5,10 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	api "my-project/generated/api"
-	"my-project/internal/common"
-	"my-project/internal/infrastructure/queryservice"
-	"my-project/internal/usecases"
+	api "platform-go/generated/api"
+	"platform-go/internal/common"
+	"platform-go/internal/infrastructure/queryservice"
+	"platform-go/internal/usecases"
 )
 
 type UserController struct {

@@ -18,5 +18,5 @@ components:
   schemas:
     User:
       $ref: "./components/schemas/user.yml#/User"
-    NewUser:
-      $ref: "./components/schemas/user.yml#/NewUser"
+    CreateUser:
+      $ref: "./components/schemas/user.yml#/CreateUser"

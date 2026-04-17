@@ -3,7 +3,7 @@ package usecases
 import (
 	"context"
 
-	"my-project/internal/domain/user"
+	"platform-go/internal/domain/user"
 )
 
 type UserUsecase struct {

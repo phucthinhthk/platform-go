@@ -12,7 +12,7 @@ User:
     updatedAt:
       type: string
       format: date-time
-NewUser:
+CreateUser:
   type: object
   required:
     - name

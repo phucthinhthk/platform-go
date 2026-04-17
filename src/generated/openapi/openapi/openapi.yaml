@@ -33,7 +33,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/NewUser"
+              $ref: "#/components/schemas/CreateUser"
         required: true
       responses:
         "201":
@@ -66,7 +66,7 @@ components:
           format: date-time
           type: string
       type: object
-    NewUser:
+    CreateUser:
       example:
         name: name
       properties:

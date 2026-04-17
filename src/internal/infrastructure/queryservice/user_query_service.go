@@ -5,7 +5,7 @@ import (
 
 	"gorm.io/gorm"
 
-	"my-project/internal/infrastructure/qsdto"
+	"platform-go/internal/infrastructure/qsdto"
 )
 
 type UserQueryService struct {

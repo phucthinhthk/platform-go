@@ -1,4 +1,4 @@
-module my-project
+module platform-go
 
 go 1.24.0
 

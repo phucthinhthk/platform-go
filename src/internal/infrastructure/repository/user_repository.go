@@ -5,8 +5,8 @@ import (
 
 	"gorm.io/gorm"
 
-	"my-project/internal/domain/user"
-	"my-project/internal/infrastructure/dbmodel"
+	"platform-go/internal/domain/user"
+	"platform-go/internal/infrastructure/dbmodel"
 )
 
 type mysqlUserRepository struct {

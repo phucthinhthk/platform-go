@@ -9,7 +9,7 @@ Dưới đây là một bản phân tích chi tiết tận răng xem code nằm 
 ## 1. Sơ Đồ Cấu Trúc Mã Nguồn
 
 ```text
-my-project/
+platform-go/
 ├── src/                          # THƯ MỤC SOURCE CHÍNH CỦA DỰ ÁN
 │   ├── cmd/                      # Nơi chứa file main.go chạy khởi động server
 │   │   └── server/               

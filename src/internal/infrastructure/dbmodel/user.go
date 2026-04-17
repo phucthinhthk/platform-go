@@ -3,7 +3,7 @@ package dbmodel
 import (
 	"time"
 
-	"my-project/internal/domain/user"
+	"platform-go/internal/domain/user"
 )
 
 type User struct {

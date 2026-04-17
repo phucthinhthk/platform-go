@@ -22,7 +22,7 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../components/schemas/user.yml#/NewUser'
+          $ref: '../components/schemas/user.yml#/CreateUser'
   responses:
     '201':
       description: Created
