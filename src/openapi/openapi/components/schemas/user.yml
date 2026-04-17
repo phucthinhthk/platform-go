@@ -1,0 +1,21 @@
+User:
+  type: object
+  properties:
+    id:
+      type: integer
+      format: int64
+    name:
+      type: string
+    createdAt:
+      type: string
+      format: date-time
+    updatedAt:
+      type: string
+      format: date-time
+NewUser:
+  type: object
+  required:
+    - name
+  properties:
+    name:
+      type: string

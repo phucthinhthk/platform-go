@@ -1,0 +1,22 @@
+openapi: 3.0.3
+info:
+  title: My Project API
+  version: 1.0.0
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+servers:
+  - url: https://api.platform.internal:8445
+    description: Local Development Server
+tags:
+  - name: users
+    description: User management
+paths:
+  /users:
+    $ref: "./paths/users.yml"
+components:
+  schemas:
+    User:
+      $ref: "./components/schemas/user.yml#/User"
+    NewUser:
+      $ref: "./components/schemas/user.yml#/NewUser"

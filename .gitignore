@@ -1,0 +1,5 @@
+src/.env.local
+src/.env.test
+node_modules/
+dist/
+.DS_Store

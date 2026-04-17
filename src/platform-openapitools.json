@@ -1,0 +1,10 @@
+{
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.11.0"
+  },
+  "generatorName": "openapi-yaml",
+  "apiPackage": "platform",
+  "inputSpec": "openapi/openapi/openapi.yml",
+  "outputDir": "generated/openapi"
+}

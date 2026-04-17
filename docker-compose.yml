@@ -1,0 +1,90 @@
+version: "3.8"
+
+networks:
+  platform-network:
+    name: platform-network
+
+services:
+  platform-db:
+    build:
+      context: .
+      dockerfile: dockerfiles/mysql/Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: platform_db
+    ports:
+      - "3309:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./dockerfiles/mysql/my.cnf:/etc/my.cnf
+      - ./dockerfiles/mysql/init:/docker-entrypoint-initdb.d
+    networks:
+      platform-network:
+        aliases:
+          - platform-db
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Go API Service
+  platform-api:
+    build:
+      context: .
+      dockerfile: dockerfiles/go/platform/Dockerfile.go_local
+    ports:
+      - "8088:8080"
+      - "3458:2345" # Port dành cho công cụ debug Delve
+    volumes:
+      - ./src:/go/app
+    tty: true
+    depends_on:
+      platform-db:
+        condition: service_healthy
+    networks:
+      platform-network:
+        aliases:
+          - backend.platform.internal
+
+  # Swagger UI Document
+  platform-swagger-ui:
+    image: swaggerapi/swagger-ui
+    ports:
+      - "8098:8080"
+    environment:
+      API_URL: openapi.yaml
+    volumes:
+      - ./src/generated/openapi/openapi/openapi.yaml:/usr/share/nginx/html/openapi.yaml
+    networks:
+      - platform-network
+
+  # HTTPS Proxy for API and Swagger UI
+  platform-https-proxy:
+    image: steveltn/https-portal:1
+    ports:
+      - "8085:80"
+      - "8445:443"
+    environment:
+      STAGE: local
+      DOMAINS: "api.platform.internal -> http://platform-api:8080, swagger.platform.internal -> http://platform-swagger-ui:8080"
+    networks:
+      - platform-network
+
+  # Node toolchain for OpenAPI code generation and misc frontend tasks
+  platform-node:
+    build:
+      context: .
+      dockerfile: dockerfiles/node/Dockerfile
+    volumes:
+      - ./src/platform-openapitools.json:/app/platform-openapitools.json
+      - ./src/openapi:/app/openapi
+      - ./src/generated:/app/generated
+    tty: true
+    ports:
+      - "3003:3001"
+    networks:
+      - platform-network
+
+volumes:
+  db_data:
