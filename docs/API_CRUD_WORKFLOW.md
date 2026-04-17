@@ -18,7 +18,7 @@ Hệ thống hoạt động theo mô hình tách biệt luồng Đọc và Ghi:
 ### Bước 1: Định nghĩa API (OpenAPI First)
 *   **Nơi thực hiện**: `src/openapi/openapi/`.
 *   **Việc cần làm**: Định nghĩa Path, Request, Response và đặc biệt là `operationId`.
-*   **Lệnh chạy**: `make gen`.
+*   **Lệnh chạy**: `make codegen` (alias: `make gen`) — tái sinh mã trong `src/generated/`.
 
 ### Bước 2: Tạo Folder Domain riêng biệt
 *   **Nơi thực hiện**: `src/internal/domain/<tên_nghiệp_vụ>/`.
@@ -54,6 +54,38 @@ Hệ thống hoạt động theo mô hình tách biệt luồng Đọc và Ghi:
 ### Bước 8: Dependency Injection & Router
 *   **Lệnh chạy**: `make wire`.
 *   **Router**: Đăng ký controller mới vào router trong `src/cmd/server/main.go`.
+
+---
+
+## Quick examples & notes
+
+- OperationId example (OpenAPI path):
+
+    ```yaml
+    post:
+        operationId: createUser
+        requestBody:
+            content:
+                application/json:
+                    schema:
+                        $ref: '../components/schemas/user.yml#/CreateUser'
+        responses:
+            '201':
+                description: Created
+    ```
+
+- Generated code policy: `src/generated/` contains generated sources (models and server stubs). Regenerate with `make codegen`. Prefer committing generated code only when necessary for CI or downstream consumers.
+
+- Migrations & seed: migrations live in `src/db/migrations/` and seed logic in `src/db/seed/`. Use your migration tooling or the included scripts to run migrations before starting the app.
+
+- Transactions: perform transactional logic in repository or usecase layer; return errors to allow rollback. Keep transaction boundaries small and explicit.
+
+- Tests & CI: run unit tests with `go test ./...`. For integration tests that need DB, use `testonly/` helpers and a test database container. Add CI step `make test` if desired.
+
+- Validation & errors: use helpers in `internal/common` to unify error format and HTTP codes. Validate request bodies in controller (via generated models) and in usecase for business rules.
+
+- Auth & permissions: implement authentication in `internal/middleware/` and enforce authorization in controller/usecase as appropriate.
+
 
 ---
 

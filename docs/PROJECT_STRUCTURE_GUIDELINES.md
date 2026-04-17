@@ -25,8 +25,8 @@ platform-go/
 │   ├── internal/                 # THÙNG CHỨA TRANH LOGIC & BUSINESS CỦA ỨNG DỤNG
 │   │   ├── common/               # Xử lý logic dùng chung (helpers, error code, types base)
 │   │   ├── constants/            # Các biến/hằng số dùng chung toàn system
-│   │   ├── controller/           # Chứa các file Route HTTP Handler. Nhận Request -> Call Logic -> Response
-│   │   ├── controller_test/      # File unit test cho lớp controller
+│   │   ├── interfaces/controller/           # Chứa các file Route HTTP Handler. Nhận Request -> Call Logic -> Response
+│   │   ├── (unit tests: *_test.go files under corresponding packages)
 │   │   ├── di/                   # Chứa cấu hình Dependency Injection (Google Wire)
 │   │   ├── domain/               # Trái tim lõi nhất: Chỉ chứa Interface và Entity của Domain, không chứa logic code
 │   │   ├── infrastructure/       # Lớp ngoài cùng của Clean Architecture: Các kết nối tới "Thế Giới Bên Ngoài"
@@ -51,6 +51,11 @@ platform-go/
 ├── .air.toml                     # Cấu hình auto-reload code bằng Air khi gõ
 └── .env.local / .env.test        # Lưu biến môi trường cục bộ/test (KHÔNG ĐẨY LÊN GIT)
 ```
+
+Note:
+- Module name: `platform-go` (see `src/go.mod`). Go version: `1.24`.
+- Code generation: run `make codegen` (or `make generate`) to regenerate OpenAPI-generated code under `src/generated/`.
+- Dev run: use `docker compose up -d` or `make dev` if available. Keep `.env.local` for local overrides.
 
 ---
 
