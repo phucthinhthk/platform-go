@@ -23,9 +23,6 @@ func NewUserController(usecase *usecases.UserUsecase, queryService *queryservice
 	}
 }
 
-// Kiểm tra xem UserController có thỏa mãn interface ServerInterface không
-var _ api.ServerInterface = (*UserController)(nil)
-
 // Get users
 // (GET /users)
 func (uc *UserController) GetUsers(c *gin.Context) {

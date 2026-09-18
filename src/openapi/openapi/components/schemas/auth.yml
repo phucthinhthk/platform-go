@@ -1,0 +1,28 @@
+LoginRequest:
+  type: object
+  required: [email, password]
+  properties:
+    email:
+      type: string
+      format: email
+    password:
+      type: string
+      format: password
+LoginUser:
+  type: object
+  required: [id, name, email, accountType]
+  properties:
+    id: {type: integer, format: int64}
+    name: {type: string}
+    email: {type: string, format: email}
+    accountType: {type: string, example: admin}
+AuthTokenResponse:
+  type: object
+  required: [data, message]
+  properties:
+    data:
+      type: object
+      required: [csrfToken]
+      properties:
+        csrfToken: {type: string}
+    message: {type: string}

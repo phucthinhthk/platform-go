@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -12,7 +13,12 @@ import (
 
 	api "platform-go/generated/api"
 	"platform-go/internal/di"
+	"platform-go/internal/infrastructure/repository"
+	"platform-go/internal/infrastructure/security"
+	"platform-go/internal/interfaces/controller"
+	"platform-go/internal/middleware"
 	"platform-go/internal/pkg/app"
+	"platform-go/internal/usecases"
 )
 
 func main() {
@@ -52,13 +58,30 @@ func main() {
 		log.Fatalf("failed to connect database: %v", err)
 	}
 
-	appHandler := di.InitializeHandler(db)
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" && app.IsLocal() {
+		jwtSecret = "local-development-secret-change-me-32"
+		log.Println("JWT_SECRET is not set; using a development-only secret")
+	}
+	jwtService, err := security.NewJWTService(jwtSecret)
+	if err != nil {
+		log.Fatalf("invalid JWT configuration: %v", err)
+	}
+	userHandler := di.InitializeHandler(db)
+	authUsecase := usecases.NewAuthUsecase(repository.NewMySQLUserRepository(db), jwtService)
+	authHandler := controller.NewAuthController(authUsecase, !app.IsLocal())
+	appHandler := controller.NewHandler(userHandler, authHandler)
 
 	r := gin.Default()
 
 	// CORS Middleware
 	r.Use(func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
+		origin := os.Getenv("CORS_ALLOW_ORIGIN")
+		if origin == "" {
+			origin = "http://localhost:3000"
+		}
+		c.Writer.Header().Set("Access-Control-Allow-Origin", origin)
+		c.Writer.Header().Set("Vary", "Origin")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
 		c.Writer.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS")
@@ -70,7 +93,9 @@ func main() {
 
 		c.Next()
 	})
+	r.Use(middleware.JWTAuth(authUsecase), middleware.CSRFProtection())
 
+	r.GET("/health", func(c *gin.Context) { c.Status(http.StatusNoContent) })
 	// Register generated routes to the gin router
 	api.RegisterHandlers(r, appHandler)
 

@@ -9,6 +9,18 @@ import (
 
 // ServerInterface represents all server handlers.
 type ServerInterface interface {
+	// Sign in as an administrator
+	// (POST /login)
+	Login(c *gin.Context)
+	// Clear authentication cookies
+	// (POST /logout)
+	Logout(c *gin.Context)
+	// Get the currently authenticated administrator
+	// (GET /me)
+	Me(c *gin.Context)
+	// Refresh authentication cookies
+	// (POST /refresh)
+	Refresh(c *gin.Context)
 	// Get users
 	// (GET /users)
 	GetUsers(c *gin.Context)
@@ -25,6 +37,58 @@ type ServerInterfaceWrapper struct {
 }
 
 type MiddlewareFunc func(c *gin.Context)
+
+// Login operation middleware
+func (siw *ServerInterfaceWrapper) Login(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.Login(c)
+}
+
+// Logout operation middleware
+func (siw *ServerInterfaceWrapper) Logout(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.Logout(c)
+}
+
+// Me operation middleware
+func (siw *ServerInterfaceWrapper) Me(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.Me(c)
+}
+
+// Refresh operation middleware
+func (siw *ServerInterfaceWrapper) Refresh(c *gin.Context) {
+
+	for _, middleware := range siw.HandlerMiddlewares {
+		middleware(c)
+		if c.IsAborted() {
+			return
+		}
+	}
+
+	siw.Handler.Refresh(c)
+}
 
 // GetUsers operation middleware
 func (siw *ServerInterfaceWrapper) GetUsers(c *gin.Context) {
@@ -79,6 +143,10 @@ func RegisterHandlersWithOptions(router gin.IRouter, si ServerInterface, options
 		ErrorHandler:       errorHandler,
 	}
 
+	router.POST(options.BaseURL+"/login", wrapper.Login)
+	router.POST(options.BaseURL+"/logout", wrapper.Logout)
+	router.GET(options.BaseURL+"/me", wrapper.Me)
+	router.POST(options.BaseURL+"/refresh", wrapper.Refresh)
 	router.GET(options.BaseURL+"/users", wrapper.GetUsers)
 	router.POST(options.BaseURL+"/users", wrapper.CreateUser)
 }

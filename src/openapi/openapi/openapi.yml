@@ -9,9 +9,19 @@ servers:
   - url: https://api.platform.internal:8445
     description: Local Development Server
 tags:
+  - name: auth
+    description: Cookie-based authentication
   - name: users
     description: User management
 paths:
+  /login:
+    $ref: "./paths/auth.yml#/~1login"
+  /refresh:
+    $ref: "./paths/auth.yml#/~1refresh"
+  /logout:
+    $ref: "./paths/auth.yml#/~1logout"
+  /me:
+    $ref: "./paths/auth.yml#/~1me"
   /users:
     $ref: "./paths/users.yml"
 components:

@@ -1,0 +1,53 @@
+/login:
+  post:
+    summary: Sign in as an administrator
+    operationId: login
+    tags: [auth]
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/auth.yml#/LoginRequest'
+    responses:
+      '200':
+        description: Authenticated; JWT, refresh and CSRF cookies are set. Send csrfToken as X-CSRF-Token on every authenticated request.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yml#/LoginUser'
+      '400': {description: Invalid request}
+      '401': {description: Invalid credentials}
+/refresh:
+  post:
+    summary: Refresh authentication cookies
+    operationId: refresh
+    tags: [auth]
+    responses:
+      '200':
+        description: Cookies refreshed. Update the frontend CSRF token from the response.
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yml#/AuthTokenResponse'
+      '401': {description: Invalid refresh token}
+/logout:
+  post:
+    summary: Clear authentication cookies
+    operationId: logout
+    tags: [auth]
+    responses:
+      '204': {description: Logged out}
+/me:
+  get:
+    summary: Get the currently authenticated administrator
+    operationId: me
+    tags: [auth]
+    responses:
+      '200':
+        description: Current user
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/auth.yml#/LoginUser'
+      '401': {description: Unauthenticated}

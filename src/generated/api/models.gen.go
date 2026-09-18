@@ -5,11 +5,27 @@ package api
 
 import (
 	"time"
+
+	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
 // CreateUser defines model for CreateUser.
 type CreateUser struct {
 	Name string `json:"name"`
+}
+
+// LoginRequest defines model for LoginRequest.
+type LoginRequest struct {
+	Email    openapi_types.Email `json:"email"`
+	Password string              `json:"password"`
+}
+
+// LoginUser defines model for LoginUser.
+type LoginUser struct {
+	AccountType string              `json:"accountType"`
+	Email       openapi_types.Email `json:"email"`
+	Id          int64               `json:"id"`
+	Name        string              `json:"name"`
 }
 
 // User defines model for User.
@@ -19,6 +35,9 @@ type User struct {
 	Name      *string    `json:"name,omitempty"`
 	UpdatedAt *time.Time `json:"updatedAt,omitempty"`
 }
+
+// LoginJSONRequestBody defines body for Login for application/json ContentType.
+type LoginJSONRequestBody = LoginRequest
 
 // CreateUserJSONRequestBody defines body for CreateUser for application/json ContentType.
 type CreateUserJSONRequestBody = CreateUser

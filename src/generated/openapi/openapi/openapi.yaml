@@ -9,9 +9,69 @@ servers:
 - description: Local Development Server
   url: https://api.platform.internal:8445
 tags:
+- description: Cookie-based authentication
+  name: auth
 - description: User management
   name: users
 paths:
+  /login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginUser"
+          description: "Authenticated; JWT, refresh and CSRF cookies are set."
+        "400":
+          description: Invalid request
+        "401":
+          description: Invalid credentials
+      summary: Sign in as an administrator
+      tags:
+      - auth
+  /refresh:
+    post:
+      operationId: refresh
+      responses:
+        "204":
+          description: Cookies refreshed
+        "401":
+          description: Invalid refresh token
+      summary: Refresh authentication cookies
+      tags:
+      - auth
+  /logout:
+    post:
+      operationId: logout
+      responses:
+        "204":
+          description: Logged out
+      summary: Clear authentication cookies
+      tags:
+      - auth
+  /me:
+    get:
+      operationId: me
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginUser"
+          description: Current user
+        "401":
+          description: Unauthenticated
+      summary: Get the currently authenticated administrator
+      tags:
+      - auth
   /users:
     get:
       operationId: get-users
@@ -49,9 +109,9 @@ components:
   schemas:
     User:
       example:
-        createdAt: 2000-01-23T04:56:07.000+00:00
-        name: name
         id: 0
+        name: name
+        createdAt: 2000-01-23T04:56:07.000+00:00
         updatedAt: 2000-01-23T04:56:07.000+00:00
       properties:
         id:
@@ -73,5 +133,44 @@ components:
         name:
           type: string
       required:
+      - name
+      type: object
+    LoginRequest:
+      example:
+        email: email
+        password: password
+      properties:
+        email:
+          format: email
+          type: string
+        password:
+          format: password
+          type: string
+      required:
+      - email
+      - password
+      type: object
+    LoginUser:
+      example:
+        id: 0
+        name: name
+        email: email
+        accountType: admin
+      properties:
+        id:
+          format: int64
+          type: integer
+        name:
+          type: string
+        email:
+          format: email
+          type: string
+        accountType:
+          example: admin
+          type: string
+      required:
+      - accountType
+      - email
+      - id
       - name
       type: object

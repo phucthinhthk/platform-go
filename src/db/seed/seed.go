@@ -6,13 +6,18 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
 
 type User struct {
-	ID   uint64 `gorm:"primaryKey"`
-	Name string
+	ID           uint64 `gorm:"primaryKey"`
+	Name         string
+	Email        string
+	PasswordHash string
+	AccountType  string
+	Active       bool
 }
 
 func main() {
@@ -28,11 +33,21 @@ func main() {
 		dbName := os.Getenv("DB_NAME")
 
 		// Fallback nếu chạy bên ngoài Docker hoặc thiếu biến lẻ
-		if user == "" { user = "root" }
-		if pass == "" { pass = "root" }
-		if host == "" { host = "localhost" } // Nếu chạy từ host thì trỏ localhost
-		if dbPort == "" { dbPort = "3309" }
-		if dbName == "" { dbName = "platform_db" }
+		if user == "" {
+			user = "root"
+		}
+		if pass == "" {
+			pass = "root"
+		}
+		if host == "" {
+			host = "localhost"
+		} // Nếu chạy từ host thì trỏ localhost
+		if dbPort == "" {
+			dbPort = "3309"
+		}
+		if dbName == "" {
+			dbName = "platform_db"
+		}
 
 		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, pass, host, dbPort, dbName)
 	}
@@ -43,14 +58,14 @@ func main() {
 	}
 
 	fmt.Println("Seeding users...")
-	users := []User{
-		{Name: "User 1"},
-		{Name: "User 2"},
-		{Name: "User 3"},
+	adminPassword, err := bcrypt.GenerateFromPassword([]byte("123456"), bcrypt.DefaultCost)
+	if err != nil {
+		log.Fatalf("Could not hash admin password: %v", err)
 	}
+	users := []User{{Name: "Administrator", Email: "admin@gmail.com", PasswordHash: string(adminPassword), AccountType: "admin", Active: true}}
 
 	for _, u := range users {
-		if err := db.Create(&u).Error; err != nil {
+		if err := db.Where("email = ?", u.Email).FirstOrCreate(&u).Error; err != nil {
 			log.Printf("Could not seed user %s: %v", u.Name, err)
 		} else {
 			fmt.Printf("Seeded user: %s\n", u.Name)
