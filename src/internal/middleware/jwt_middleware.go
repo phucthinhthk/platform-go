@@ -12,8 +12,14 @@ import (
 )
 
 func JWTAuth(auth *usecases.AuthUsecase) gin.HandlerFunc {
+	skipPaths := map[string]bool{
+		"/login":   true,
+		"/refresh": true,
+		"/health":  true,
+	}
+
 	return func(c *gin.Context) {
-		if c.Request.URL.Path == "/login" || c.Request.URL.Path == "/refresh" || c.Request.URL.Path == "/health" {
+		if skipPaths[c.Request.URL.Path] {
 			c.Next()
 			return
 		}
